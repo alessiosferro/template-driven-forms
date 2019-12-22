@@ -1,0 +1,46 @@
+{
+  "persone": [
+    {
+      "id": 1,
+      "nome": "Alessio",
+      "cognome": "Sferro",
+      "eta": "30",
+      "sesso": 1
+    },
+    {
+      "id": 2,
+      "nome": "Maria",
+      "cognome": "Sergi",
+      "eta": 50,
+      "sesso": 2
+    },
+    {
+      "id": 3,
+      "nome": "Gaetano",
+      "cognome": "Sferro",
+      "eta": 60,
+      "sesso": 1
+    },
+    {
+      "id": 4,
+      "nome": "Giovanna",
+      "cognome": "Sferro",
+      "eta": "43",
+      "sesso": 2
+    }
+  ],
+  "sesso": [
+    {
+      "id": 1,
+      "descrizione": "maschio"
+    },
+    {
+      "id": 2,
+      "descrizione": "femmina"
+    },
+    {
+      "id": 3,
+      "descrizione": "altro"
+    }
+  ]
+}
