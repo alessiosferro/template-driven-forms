@@ -3,7 +3,7 @@
     {
       "id": 1,
       "nome": "Alessio",
-      "cognome": "Sferro",
+      "cognome": "Sferrone",
       "eta": "30",
       "sesso": 1
     },
@@ -26,7 +26,7 @@
       "nome": "Giovanna",
       "cognome": "Sferro",
       "eta": "43",
-      "sesso": 2
+      "sesso": 1
     }
   ],
   "sesso": [

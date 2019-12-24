@@ -1,13 +1,18 @@
-@import '../../../../assets/scss/colors';
+@import "../../../../assets/scss/colors";
 
 .form {
+  &-label {
+      &__invalid {
+        color: $color-error !important;
+      }
+  }
 
   &-group {
     position: relative;
     margin: 4rem 0;
+    transition: all 0.2s ease-in-out;
 
     > label {
-      transition: all .2s ease-in-out;
       position: absolute;
       top: -2.4rem;
       left: 0;
@@ -35,14 +40,25 @@
     border-radius: 3px;
     padding-left: 1rem;
 
+    &__disabled {
+      pointer-events: none;
+      user-select: none;
+      opacity: .4;
+    }
+
     &:focus {
       outline: none;
       border-color: $primary-color;
-      box-shadow: 0 0 0 3px rgba($primary-color, .3);
+      box-shadow: 0 0 0 3px rgba($primary-color, 0.3);
 
       + label {
         color: $primary-color;
       }
+    }
+
+    &__invalid {
+      box-shadow: 0 0 0 3px rgba($color-error, 0.3) !important;
+      border-color: $color-error !important;
     }
   }
 }
@@ -53,7 +69,7 @@
   border-radius: 3px;
   cursor: pointer;
   font-size: 1.3rem;
-  transition: all .2s ease-in-out;
+  transition: all 0.2s ease-in-out;
 
   &-primary {
     border: none;
@@ -66,7 +82,12 @@
 
     &:focus {
       outline: none;
-      box-shadow: 0 0 0 3px rgba($primary-color, .3);
+      box-shadow: 0 0 0 3px rgba($primary-color, 0.3);
+    }
+
+    &:disabled {
+      opacity: 0.4;
+      pointer-events: none;
     }
   }
 }

@@ -8,6 +8,8 @@ export interface ControlInterface {
   name: string;
   placeholder: string;
   class: string;
+  required: boolean;
+  disabled: boolean;
 }
 
 export interface FormControlInterface {

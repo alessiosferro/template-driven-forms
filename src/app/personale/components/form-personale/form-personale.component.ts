@@ -1,61 +1,94 @@
-import {
-  Component, EventEmitter,
-  Input, OnInit, Output
-} from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from "@angular/core";
 
-import {Persona} from '../../models/persona.interface';
-import {FormControlInterface} from '../../../models/form-control.interface';
-import {FormControlSelectInterface} from '../../../models/form-control-select.interface';
-import {FormFieldsWithTypes} from '../../../models/form-fields-with-types.interface';
-import {StaticDataService} from '../../../services/static-data.service';
+import { Persona } from "../../models/persona.interface";
+import { FormControlInterface } from "../../../models/form-control.interface";
+import { FormControlSelectInterface } from "../../../models/form-control-select.interface";
+import { FormFieldsWithTypes } from "../../../models/form-fields-with-types.interface";
+import { StaticDataService } from "../../../services/static-data.service";
 
 @Component({
-  selector: 'app-form-personale',
-  styleUrls: ['./form-personale.component.scss'],
+  selector: "app-form-personale",
+  styleUrls: ["./form-personale.component.scss"],
   template: `
     <!-- FORM -->
-    <form #form="ngForm"
-          [ngStyle]="style"
-          *ngFor="let persona of persone"
-          (ngSubmit)="onSubmit({formData: form.value, isFormValid: form.valid})">
-
+    <form
+      #form="ngForm"
+      [ngStyle]="style"
+      *ngFor="let persona of persone"
+      (ngSubmit)="onSubmit({ formData: form.value, isFormValid: form.valid })"
+    >
       <!-- INPUTS -->
-      <div [ngClass]="{'form-group--first': f}"
-           [class]="formGroupClass"
-           *ngFor="let formControl of formControls; let f = first">
+      <div
+        [ngClass]="{ 'form-group--first': f }"
+        [class]="formGroupClass"
+        *ngFor="let formControl of formControls; let f = first"
+      >
+        <input
+          #input="ngModel"
+          [ngClass]="{ 
+            'form-control__invalid': input.errors && input.touched,
+            'form-control__disabled': formControl.control.disabled
+          }"
+          [required]="formControl.control.required"
+          [ngModel]="persona[formControl.control.name]"
+          [class]="formControl.control.class"
+          [type]="formControl.control.type"
+          [id]="formControl.control.id + persona.id"
+          [name]="formControl.control.name"
+          [placeholder]="formControl.control.placeholder | titlecase"
+        />
 
-        <input [ngModel]="persona[formControl.control.name]"
-               [class]="formControl.control.class"
-               [type]="formControl.control.type"
-               [id]="formControl.control.id + persona.id"
-               [name]="formControl.control.name"
-               [placeholder]="formControl.control.placeholder | titlecase"/>
+        <label
+          [ngClass]="{ 'form-label__invalid': input.errors && input.touched }"
+          [for]="formControl.control.id + persona.id"
+          >{{ formControl.label.text | titlecase }}</label
+        >
 
-        <label [for]="formControl.control.id + persona.id">{{ formControl.label.text | titlecase }}</label>
+        <span
+          style="display: inline-block; margin-top: 1rem; color: red"
+          *ngIf="input.errors?.required && input.touched"
+          >Il campo è obbligatorio</span
+        >
       </div>
 
       <!-- SELECTS -->
-      <div [ngClass]="{'form-group--last': l}"
-           [class]="formGroupClass"
-           *ngFor="let control of formSelects.selects; let l = last">
-
-        <select [ngModel]="persona[control.select.name]"
-                [class]="control.select.class"
-                [id]="control.select.id + persona.id"
-                [name]="control.select.name">
-          <option [value]="null">{{ formSelects.defaultOption | titlecase }}</option>
-          <option *ngFor="let sesso of (staticDataService.sesso$ | async) as staticSesso" [ngValue]="sesso.id">
+      <div
+        [ngClass]="{ 'form-group--last': l }"
+        [class]="formGroupClass"
+        *ngFor="let control of formSelects.selects; let l = last"
+      >
+        <select
+          [ngModel]="persona[control.select.name]"
+          [class]="control.select.class"
+          [id]="control.select.id + persona.id"
+          [name]="control.select.name"
+        >
+          <option [value]="null">{{
+            formSelects.defaultOption | titlecase
+          }}</option>
+          <option
+            *ngFor="
+              let sesso of staticDataService.sesso$ | async as staticSesso
+            "
+            [ngValue]="sesso.id"
+          >
             {{ sesso.descrizione | titlecase }}
           </option>
         </select>
 
-        <label [for]="control.select.id + persona.id">{{ control.labelText | titlecase }}</label>
+        <label [for]="control.select.id + persona.id">{{
+          control.labelText | titlecase
+        }}</label>
       </div>
 
       <!-- SUBMIT BUTTON -->
       <button
+        [disabled]="form.invalid"
         [class]="submitButton.class"
-        [type]="submitButton.type">{{ submitButton.text }}</button>
+        [type]="submitButton.type"
+      >
+        {{ submitButton.text }}
+      </button>
     </form>
   `
 })
@@ -66,35 +99,42 @@ export class FormPersonaleComponent implements OnInit {
   formControls: FormControlInterface[] = [];
   formFields: FormFieldsWithTypes[];
   formSelects: FormControlSelectInterface;
-  formGroupClass = 'form-group';
+  formGroupClass = "form-group";
 
   submitButton = {
-    type: 'submit',
-    class: 'btn btn-primary',
-    text: 'Salva'
+    type: "submit",
+    class: "btn btn-primary",
+    text: "Salva"
   };
 
   style = {
-    'margin-top': '8.5rem'
+    "margin-top": "8.5rem"
   };
 
-  constructor(public staticDataService: StaticDataService) {
-  }
+  constructor(public staticDataService: StaticDataService) {}
 
   ngOnInit(): void {
-    this.formFields = [{
-      controlType: 'number',
-      fieldName: 'id'
-    }, {
-      controlType: 'text',
-      fieldName: 'nome'
-    }, {
-      controlType: 'text',
-      fieldName: 'cognome'
-    }, {
-      controlType: 'number',
-      fieldName: 'eta'
-    }];
+    this.formFields = [
+      {
+        controlType: "number",
+        fieldName: "id",
+        required: true,
+        disabled: true,
+      },
+      {
+        controlType: "text",
+        fieldName: "nome"
+      },
+      {
+        controlType: "text",
+        fieldName: "cognome",
+        required: true
+      },
+      {
+        controlType: "number",
+        fieldName: "eta"
+      }
+    ];
 
     for (const f of this.formFields) {
       this.formControls.push({
@@ -102,8 +142,10 @@ export class FormPersonaleComponent implements OnInit {
           id: `personale__${f.fieldName}`,
           name: f.fieldName,
           type: f.controlType,
-          class: 'form-control',
+          class: "form-control",
           placeholder: f.fieldName,
+          required: !!f.required,
+          disabled: !!f.disabled,
         },
         label: {
           text: f.fieldName
@@ -112,19 +154,21 @@ export class FormPersonaleComponent implements OnInit {
     }
 
     this.formSelects = {
-      defaultOption: 'scegli...',
-      selects: [{
-        select: {
-          id: 'personale__sesso',
-          name: 'sesso',
-          class: 'form-control',
-        },
-        labelText: 'sesso'
-      }]
+      defaultOption: "scegli...",
+      selects: [
+        {
+          select: {
+            id: "personale__sesso",
+            name: "sesso",
+            class: "form-control"
+          },
+          labelText: "sesso"
+        }
+      ]
     };
   }
 
-  onSubmit({formData, isFormValid}) {
+  onSubmit({ formData, isFormValid }) {
     if (isFormValid) {
       this.savePersona.emit(formData);
     }
